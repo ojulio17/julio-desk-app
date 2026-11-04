@@ -13,15 +13,26 @@
   // FOMO URLs come only from publisher JSON (built by links.py); refuse anything else.
   var fomo = function (u) { return typeof u === "string" && u.indexOf("https://fomo.family/") === 0 && u.indexOf("r=savipww") > 0 ? u : null; };
 
-  // --- private link: #d=DATA_PATH&t=APP_TOKEN → localStorage, then scrub from the URL bar
+  // --- private path: ?d= / #d= / window.DESK_D / localStorage
+  // iOS Home Screen uses a separate storage from Safari, so bake d into start_url (?d=) too.
+  var q = new URLSearchParams(location.search);
   var h = new URLSearchParams(location.hash.slice(1));
-  if (h.get("d")) {
-    localStorage.setItem("desk_d", h.get("d"));
-    if (h.get("t")) localStorage.setItem("desk_t", h.get("t"));
-    history.replaceState(null, "", location.pathname + location.search);
+  var incoming = q.get("d") || h.get("d") || (window.DESK_D || null);
+  if (incoming) {
+    try { localStorage.setItem("desk_d", incoming); } catch (e) {}
   }
-  var D = localStorage.getItem("desk_d");
+  if (h.get("t") || q.get("t")) {
+    try { localStorage.setItem("desk_t", h.get("t") || q.get("t")); } catch (e) {}
+  }
+  var D = incoming || (function(){ try { return localStorage.getItem("desk_d"); } catch (e) { return null; } })();
   if (!D) { $("setup").classList.remove("hidden"); return; }
+  // Keep ?d= in the URL so Add to Home Screen / manifest start_url stays unlocked.
+  if (!q.get("d")) {
+    var u = new URL(location.href);
+    u.searchParams.set("d", D);
+    u.hash = "";
+    history.replaceState(null, "", u.pathname + u.search);
+  }
   var base = "d/" + encodeURIComponent(D) + "/";
 
   function get(path) {
