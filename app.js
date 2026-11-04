@@ -87,7 +87,11 @@
       var a = s.agents[k], ok = a.status === "ok";
       return '<div class="row"><div>' + esc(k) + '</div><span style="color:' + (ok ? "#30d158" : a.status === "degraded" ? "#ff9f0a" : "#ff453a") + '">' + esc(a.status) + " · " + esc(a.age_s) + "s</span></div>";
     }).join("");
-    $("settings").innerHTML = Object.keys(s.settings).map(function (k) {
+    var fl = s.follow || null;
+    var followHtml = fl ? '<div class="row"><div>Copia follow (PAPER)</div><span style="color:' + (fl.enabled ? "#30d158" : "#ff9f0a") + '">' +
+      (fl.enabled ? "ATTIVA" : "SPENTA") + " · " + esc((fl.handles || []).length) + " trader</span></div>" +
+      '<div class="row"><div>Trader seguiti</div><span>' + esc((fl.handles || []).map(function (h) { return "@" + h; }).join(" ")) + "</span></div>" : "";
+    $("settings").innerHTML = followHtml + Object.keys(s.settings).filter(function (k) { return k !== "fomo_follows"; }).map(function (k) {
       return '<div class="row"><div>' + esc(k) + "</div><span>" + esc(s.settings[k]) + "</span></div>";
     }).join("");
     $("blockers").innerHTML = (s.blockers || []).map(function (x) { return '<div class="blocker">⛔ ' + esc(x.text) + "</div>"; }).join("");
