@@ -1,7 +1,7 @@
 /* Desk PWA — Plan B: polls static JSON under d/{DATA_PATH}/ every 15s. No secrets in this file. */
 (function () {
   "use strict";
-  var POLL_MS = 15000, STALE_S = 90;
+  var POLL_MS = 10000, STALE_S = 120;
   var $ = function (id) { return document.getElementById(id); };
   var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); };
   var usd = function (v, sign) { if (v == null || isNaN(v)) return "—"; var s = Math.abs(v).toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 2 }); return (v < 0 ? "−" : sign ? "+" : "") + s; };
