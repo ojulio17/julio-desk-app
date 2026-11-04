@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Desk">
+<meta name="theme-color" content="#000000">
+<meta name="referrer" content="no-referrer">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="stylesheet" href="app.css">
+<title>Desk</title>
+</head>
+<body>
+<header id="top">
+  <div class="title-row"><h1 id="title">Desk</h1><span id="mode" class="pill">—</span></div>
+  <div id="stale" class="stale hidden">Data is stale</div>
+</header>
+
+<main>
+  <section id="tab-desk" class="tab active">
+    <div class="hero">
+      <div class="label">Equity</div>
+      <div id="equity" class="big">—</div>
+      <div id="pnl" class="sub">—</div>
+    </div>
+    <div class="card chart-card"><canvas id="chart" height="180"></canvas></div>
+    <div class="grid3">
+      <div class="stat"><div class="label">Cash</div><div id="cash">—</div></div>
+      <div class="stat"><div class="label">Today</div><div id="today">—</div></div>
+      <div class="stat"><div class="label">Open</div><div id="openc">—</div></div>
+    </div>
+    <h2>Positions</h2>
+    <div id="positions" class="list"></div>
+    <h2>Closed</h2>
+    <div id="closed" class="list"></div>
+  </section>
+
+  <section id="tab-activity" class="tab">
+    <h2>Activity</h2>
+    <div id="activity" class="list"></div>
+  </section>
+
+  <section id="tab-coins" class="tab">
+    <h2>Pipeline · 24h</h2>
+    <div id="pipeline" class="grid3"></div>
+    <h2>Coins</h2>
+    <div id="coins" class="list"></div>
+  </section>
+
+  <section id="tab-account" class="tab">
+    <h2>Account</h2>
+    <div class="card">
+      <a id="profile" class="row link" target="_blank" rel="noopener">My FOMO profile <span>›</span></a>
+      <a id="signup" class="row link" target="_blank" rel="noopener">Open FOMO <span>›</span></a>
+    </div>
+    <h2>Agents</h2>
+    <div id="agents" class="card"></div>
+    <h2>Settings <small>(change via Telegram /set)</small></h2>
+    <div id="settings" class="card"></div>
+    <div id="blockers"></div>
+    <p class="foot">Updated <span id="updated">—</span></p>
+  </section>
+</main>
+
+<div id="sheet" class="sheet hidden">
+  <div class="sheet-inner">
+    <div class="grab"></div>
+    <button id="sheet-close" class="close">Done</button>
+    <div id="sheet-body"></div>
+  </div>
+</div>
+
+<nav id="tabs">
+  <button data-tab="desk" class="active"><span>◎</span>Desk</button>
+  <button data-tab="activity"><span>≋</span>Activity</button>
+  <button data-tab="coins"><span>◇</span>Coins</button>
+  <button data-tab="account"><span>☰</span>Account</button>
+</nav>
+
+<div id="setup" class="setup hidden">
+  <h1>Desk</h1>
+  <p>Open this app once with your private link (…#d=…&amp;t=…). It will be remembered on this device.</p>
+</div>
+
+<script src="chart.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
