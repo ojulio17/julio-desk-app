@@ -51,7 +51,25 @@
     });
   });
 
-  var state = null, chart = null;
+  var state = null, chart = null, lastEv = {};
+  var AG = { scanner: ["Scanner", "◎"], analyst: ["Analyst", "◆"], executor: ["Executor", "⚡"], risk: ["Risk", "⛨"] };
+  var stColor = function (st) { return st === "ok" ? "ok" : st === "degraded" ? "deg" : "err"; };
+  function renderAgents() {
+    if (!state) return;
+    var ags = state.agents || {};
+    $("agent-grid").innerHTML = Object.keys(AG).map(function (k) {
+      var a = ags[k] || { status: "missing", age_s: null, info: "" }, ev = lastEv[k];
+      var c = a.age_s != null && a.age_s > 120 ? "err" : stColor(a.status);
+      return '<div class="agent ' + c + '"><div class="ah"><span class="ai">' + AG[k][1] + '</span><b>' + AG[k][0] +
+        '</b><span class="badge ' + c + '">' + esc(a.status) + '</span></div><div class="ainfo">' + esc(a.info || "—") +
+        '</div><div class="aev">' + (ev ? esc(ago(ev.ts)) + " · " + esc(ev.kind) + ": " + esc(ev.message) : "&nbsp;") +
+        '</div><div class="aage">' + (a.age_s != null ? "♥ " + esc(a.age_s) + "s" : "") + "</div></div>";
+    }).join("");
+    $("agent-mini").innerHTML = Object.keys(ags).filter(function (k) { return !AG[k]; }).sort().map(function (k) {
+      var a = ags[k], c = stColor(a.status);
+      return '<div class="mini"><span class="dot ' + c + '"></span><b>' + esc(k) + '</b> <span class="s">' + esc(a.info || a.status) + " · " + esc(a.age_s) + "s</span></div>";
+    }).join("");
+  }
 
   function posItem(p, closed) {
     var v = p.pnl_usd;
@@ -83,6 +101,7 @@
     }).join("");
     var pr = fomo(s.links.profile), su = fomo(s.links.signup);
     if (pr) $("profile").href = pr; if (su) $("signup").href = su;
+    renderAgents();
     $("agents").innerHTML = Object.keys(s.agents).sort().map(function (k) {
       var a = s.agents[k], ok = a.status === "ok";
       return '<div class="row"><div>' + esc(k) + '</div><span style="color:' + (ok ? "#30d158" : a.status === "degraded" ? "#ff9f0a" : "#ff453a") + '">' + esc(a.status) + " · " + esc(a.age_s) + "s</span></div>";
@@ -106,6 +125,9 @@
   }
 
   function renderActivity(a) {
+    lastEv = {};
+    a.events.forEach(function (e) { if (e.agent && !lastEv[e.agent]) lastEv[e.agent] = e; });
+    renderAgents();
     $("activity").innerHTML = a.events.map(function (e) {
       return '<div class="item"' + (e.mint ? ' data-mint="' + esc(e.mint) + '"' : "") + '><span class="dot ' + esc(e.level) + '"></span><div class="main"><div class="t" style="font-weight:500;white-space:normal">' +
         esc(e.message) + '</div><div class="s">' + esc(e.agent) + " · " + esc(e.kind) + " · " + tm(e.ts) + "</div></div></div>";
